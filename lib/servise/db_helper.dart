@@ -25,7 +25,7 @@ class DbHelper {
     CREATE TABLE DatabaseTable (
       id INTEGER PRIMARY KEY,
       name TEXT,
-      age TEXT,
+      age TEXT
     )
   ''');
       },

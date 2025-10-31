@@ -30,9 +30,10 @@ class HomeF extends StatelessWidget {
             if (snapshot.hasError) {
               return Center(child: Text('error${snapshot.error}'));
             }
-            if (snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text("Empty data"));
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text("No data found"));
             }
+
             final items = snapshot.data!;
             return ListView.builder(
               itemBuilder: (context, index) {

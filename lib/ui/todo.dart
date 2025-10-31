@@ -12,8 +12,8 @@ class Todo extends StatefulWidget {
 class _TodoState extends State<Todo> {
   final name = TextEditingController();
   final ageint = TextEditingController();
-
   final DbHelper dbHelper = DbHelper();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,62 +23,50 @@ class _TodoState extends State<Todo> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextFormField(
+              TextField(
                 controller: name,
-                validator: (value) {
-                  if (name.text.isEmpty) {
-                    return 'Filed the form';
-                  }
-                  return null;
-                },
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Color(0xFFF5F5F5),
+                  fillColor: const Color(0xFFF5F5F5),
                   hintText: 'Title',
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey),
-                    // borderSide: BorderSide.none,
+                    borderSide: const BorderSide(color: Colors.blueGrey),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
+                    borderSide: const BorderSide(color: Colors.green),
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-              TextFormField(
+              const SizedBox(height: 20),
+
+              TextField(
                 controller: ageint,
-                validator: (value) {
-                  if (ageint.text.isEmpty) {
-                    return 'Filed the form';
-                  }
-                  return null;
-                },
                 minLines: 3,
                 maxLines: 5,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Color(0xFFF5F5F5),
+                  fillColor: const Color(0xFFF5F5F5),
                   hintText: 'Description',
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey),
-                    // borderSide: BorderSide.none,
+                    borderSide: const BorderSide(color: Colors.blueGrey),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
+                    borderSide: const BorderSide(color: Colors.green),
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+
+              const SizedBox(height: 20),
+
               Row(
                 children: [
                   Expanded(
                     child: SizedBox(
                       height: 50,
-                      width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red[200],
@@ -88,20 +76,32 @@ class _TodoState extends State<Todo> {
                           ageint.clear();
                           Navigator.pop(context);
                         },
-                        child: Text('Cancel'),
+                        child: const Text('Cancel'),
                       ),
                     ),
                   ),
-                  SizedBox(width: 20),
+
+                  const SizedBox(width: 20),
+
                   Expanded(
                     child: SizedBox(
                       height: 50,
-                      width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[200],
                         ),
                         onPressed: () async {
+                          //   Validation
+                          if (name.text.isEmpty || ageint.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Filed the form'),
+                                backgroundColor: Colors.redAccent,
+                              ),
+                            );
+                            return;
+                          }
+
                           await dbHelper.insertData(
                             ModelClass(
                               id: DateTime.now().millisecondsSinceEpoch,
@@ -109,19 +109,19 @@ class _TodoState extends State<Todo> {
                               age: ageint.text,
                             ),
                           );
+
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Todo added successfully'),
-                              duration: Duration(seconds: 1),
-                              backgroundColor: Colors.green[200],
+                            const SnackBar(
+                              content: Text('successfully added TODO'),
+                              backgroundColor: Colors.green,
                             ),
                           );
+
                           name.clear();
                           ageint.clear();
                           Navigator.pop(context);
                         },
-
-                        child: Text('Submit'),
+                        child: const Text('Submit'),
                       ),
                     ),
                   ),

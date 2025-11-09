@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo/model/model_class.dart';
 import 'package:todo/servise/db_helper.dart';
+import 'package:todo/servise/provider.dart';
 
 class Todo extends StatefulWidget {
   const Todo({super.key});
@@ -101,8 +103,11 @@ class _TodoState extends State<Todo> {
                             );
                             return;
                           }
-
-                          await dbHelper.insertData(
+                          final todoProvider = Provider.of<TodoProvider>(
+                            context,
+                            listen: false,
+                          );
+                          await todoProvider.addTodo(
                             ModelClass(
                               id: DateTime.now().millisecondsSinceEpoch,
                               name: name.text,
@@ -119,6 +124,7 @@ class _TodoState extends State<Todo> {
 
                           name.clear();
                           ageint.clear();
+
                           Navigator.pop(context);
                         },
                         child: const Text('Submit'),

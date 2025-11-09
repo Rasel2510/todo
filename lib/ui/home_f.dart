@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:todo/model/model_class.dart';
-import 'package:todo/servise/db_helper.dart';
+import 'package:provider/provider.dart';
+import 'package:todo/servise/provider.dart';
 import 'package:todo/ui/todo.dart';
 
-class HomeF extends StatelessWidget {
-  final DbHelper dbHelper = DbHelper();
-  HomeF({super.key});
+class HomeF extends StatefulWidget {
+  const HomeF({super.key});
+
+  @override
+  State<HomeF> createState() => _HomeFState();
+}
+
+class _HomeFState extends State<HomeF> {
+  @override
+  void initState() {
+    super.initState();
+    // Load todos when screen starts
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<TodoProvider>(context, listen: false).loadTodos();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,53 +27,65 @@ class HomeF extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(Icons.menu),
-            Text("TODO", style: TextStyle(fontWeight: FontWeight.bold)),
+            const Icon(Icons.menu),
+            const Text("TODO", style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: FutureBuilder<List<ModelClass>>(
-          future: dbHelper.readData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError) {
-              return Center(child: Text('error${snapshot.error}'));
-            }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text("No data found"));
-            }
+      body: Consumer<TodoProvider>(
+        builder: (context, todoProvider, child) {
+          // Show loading indicator
+          if (todoProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            final items = snapshot.data!;
-            return ListView.builder(
-              itemBuilder: (context, index) {
-                final item = items[index];
-                return ListTile(
-                  title: Text(item.name),
+          // Show empty state
+          if (todoProvider.todos.isEmpty) {
+            return const Center(
+              child: Text(
+                "No todos found",
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
+            );
+          }
+
+          // Show todo list
+          return ListView.builder(
+            itemCount: todoProvider.todos.length,
+            itemBuilder: (context, index) {
+              final item = todoProvider.todos[index];
+              return Card(
+                elevation: 4,
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: ListTile(
+                  title: Text(
+                    item.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text(item.age),
                   trailing: IconButton(
                     onPressed: () async {
-                      await dbHelper.deleteData(item.id);
+                      await todoProvider.deleteTodo(item.id);
+                      // UI automatically updates because of notifyListeners()
                     },
-                    icon: Icon(Icons.remove),
+                    icon: const Icon(Icons.remove, color: Colors.red),
                   ),
-                );
-              },
-            );
-          },
-        ),
+                ),
+              );
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red[200],
         foregroundColor: Colors.white,
-
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => Todo()));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const Todo()),
+          );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

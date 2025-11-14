@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/servise/provider.dart';
-import 'package:todo/ui/todo.dart';
+import 'package:todo/widget/todo.dart';
 
 class HomeF extends StatefulWidget {
   const HomeF({super.key});
@@ -66,7 +66,7 @@ class _HomeFState extends State<HomeF> {
                   trailing: IconButton(
                     onPressed: () async {
                       await todoProvider.deleteTodo(item.id);
-                      // UI automatically updates because of notifyListeners()
+                      
                     },
                     icon: const Icon(Icons.remove, color: Colors.red),
                   ),

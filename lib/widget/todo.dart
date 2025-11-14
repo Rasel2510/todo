@@ -97,8 +97,10 @@ class _TodoState extends State<Todo> {
                           if (name.text.isEmpty || ageint.text.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Filed the form'),
-                                backgroundColor: Colors.redAccent,
+                                content: Text('Filed the form',style: TextStyle(fontWeight: FontWeight.bold),),
+                                backgroundColor: Color.fromARGB(129, 255, 82, 82),
+                                duration: Duration(milliseconds: 1000),
+                                behavior: SnackBarBehavior.floating,
                               ),
                             );
                             return;
@@ -117,8 +119,12 @@ class _TodoState extends State<Todo> {
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('successfully added TODO'),
-                              backgroundColor: Colors.green,
+                              content: Text('successfully added TODO', style: TextStyle(fontWeight: FontWeight.bold),),
+                             backgroundColor:Color.fromARGB(168, 18, 214, 25),
+                              behavior: SnackBarBehavior.floating,
+                              duration: Duration(milliseconds: 1000),
+                              elevation: 6,
+
                             ),
                           );
 
